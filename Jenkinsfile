@@ -23,19 +23,20 @@ stages{
         steps{
             sh "npm i"
             sh "npx cypress run --browser ${BROWSER} --spec ${SPEC}"
-            sh "node cypress/cucumberReport.js"
+            
         }
     }
     stage('Deploying'){
         steps{
             echo "Deploy the application"
+            sh "node cypress/cucumberReport.js"
         }
     }
 }
    post{
           always{
               publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'cypress//cucumber-report', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: ''])
-              //cleanWs()
+              cleanWs()
           }
           
        }
