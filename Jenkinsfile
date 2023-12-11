@@ -3,7 +3,7 @@ pipeline{
     agent any
 
 parameters{
-    string(name: 'SPEC', defaultvalue:"cypress/e2e/Login.feature", description:"Enter the script path that you want to execute")
+    string(name: 'SPEC', defaultValue:"cypress/e2e/Login.feature", description:"Enter the script path that you want to execute")
     choice(name:'BROWSER',choices:['chrome','edge','firebox'],description:"Choice the browser where you want to execute you script")
 }
 
@@ -29,17 +29,13 @@ stages{
             echo "Deploy the application"
         }
     }
-    
-    post{
+}
+   post{
           always{
               publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'cypress//cucumber-report', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: ''])
               //cleanWs()
           }
           
        }
-
-
-
-}
 
 }
