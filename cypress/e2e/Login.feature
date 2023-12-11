@@ -24,4 +24,4 @@ Feature: E2E Login Automation
     Then I Click SignIn Button
     And I Can See a msg "You are successfully logged in" with My Username "Narayanan"
     Then I ClicK LogOut Buuton
-    And I return back "Sign in" Page
+    And I return back "Sign i" Page
