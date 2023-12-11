@@ -21,9 +21,10 @@ stages{
     }
     stage('Testing'){
         steps{
+            catchError(buildResult:'UNSTABLE',stageResult:'FAILURE'){
             sh "npm i"
             sh "npx cypress run --browser ${BROWSER} --spec ${SPEC}"
-            
+            }
         }
     }
     stage('Reporting'){
