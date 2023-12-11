@@ -26,9 +26,8 @@ stages{
             
         }
     }
-    stage('Deploying'){
+    stage('Reporting'){
         steps{
-            echo "Deploy the application"
             sh "node cypress/cucumberReport.js"
         }
     }
