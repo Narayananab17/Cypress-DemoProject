@@ -2,7 +2,7 @@ pipeline{
 
     agent any
 
-    tools {nodejs "nodejs"}
+    tools {nodejs "NodeJS"}
 
 parameters{
     string(name: 'SPEC', defaultValue:"cypress/e2e/Login.feature", description:"Enter the script path that you want to execute")
