@@ -135,38 +135,6 @@ function generateReport() {
     report.generate({
       jsonDir: cucumberJsonDir,
       reportPath: htmlReportDir,
-      displayDuration: true,
-      useCDN: true,
-      pageTitle: "Simulacion de Credito Online",
-      reportName: `Simulacion de Credito Online - ${new Date().toLocaleString()}`,
-      metadata: {
-        app: {
-          name: "Simulacion de Credito Online",
-          version: "1",
-        },
-        browser: {
-          name: "electron",
-        },
-        device: "EMULATOR",
-        platform: {
-          name: "linux",
-        },
-      },
-      customData: {
-        title: "Run info",
-        data: [
-          { label: "Project", value: "Simulacion de Credito" },
-          { label: "Release", value: "1" },
-          {
-            label: "Execution Start Time",
-            value: `${new Date().toLocaleString()}`,
-          },
-          {
-            label: "Execution End Time",
-            value: `${new Date().toLocaleString()}`,
-          },
-        ],
-      },
     });
   }
 }
