@@ -29,10 +29,10 @@ stages{
             sh "npm i"
             script{
                 if(params.All_tests == true && params.Custom_tests == false){
-                    sh "npx cypress run --headed --browser ${BROWSER}"
+                    sh "npx cypress run --browser ${BROWSER}"
                 }
                 if(params.All_tests == false && params.Custom_tests == true){
-                    sh "npx cypress run --headed --browser ${BROWSER} --spec cypress//e2e//${SPEC}"
+                    sh "npx cypress run --browser ${BROWSER} --spec cypress//e2e//${SPEC}"
                 }
             }
             }
