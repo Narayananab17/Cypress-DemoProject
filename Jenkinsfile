@@ -5,8 +5,12 @@ pipeline{
     tools {nodejs "NodeJS"}
 
 parameters{
-    string(name: 'SPEC', defaultValue:"cypress/e2e/Login.feature", description:"Enter the script path that you want to execute")
+    string(name: 'branch', defaultValue:"main", description:"Cypress Automation branch",trim: true)
     choice(name:'BROWSER',choices:['chrome','edge','firebox'],description:"Choice the browser where you want to execute you script")
+    string(name: 'SPEC', defaultValue:"cypress/e2e/**", description:"Enter the script path that you want to execute")
+    booleanParam(name:'All_tests',description:"Check this box to run All tests")
+    booleanParam(name:'Custom_tests',description:"Check this box to run Custom tests please specify only the feature file name in Spec input box eg:Login.feature")
+
 }
 
 options{
@@ -23,7 +27,14 @@ stages{
         steps{
             catchError(buildResult:'UNSTABLE',stageResult:'FAILURE'){
             sh "npm i"
-            sh "npx cypress run --browser ${BROWSER} --spec ${SPEC}"
+            script{
+                if(params.All_tests == true && params.Custom_tests == false){
+                    sh "npx cypress run --headed --browser ${BROWSER}"
+                }
+                if(params.All_tests == false && params.Custom_tests == true){
+                    sh "npx cypress run --headed --browser ${BROWSER} --spec cypress\\e2e\\${SPEC}"
+                }
+            }
             }
         }
     }
