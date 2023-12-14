@@ -10,7 +10,8 @@ parameters{
     string(name: 'SPEC', defaultValue:"cypress/e2e/**", description:"Enter the script path that you want to execute")
     booleanParam(name:'All_tests',description:"Check this box to run All tests")
     booleanParam(name:'Custom_tests',description:"Check this box to run Custom tests please specify only the feature file name in Spec input box eg:Login.feature")
-
+    booleanParam(name:'Specifc_Feature',description:"Check this box to run Custom tests please specify Spec and tag Name")
+    string(name: 'Tag_Name')
 }
 
 options{
@@ -28,11 +29,14 @@ stages{
             catchError(buildResult:'UNSTABLE',stageResult:'FAILURE'){
             sh "npm i"
             script{
-                if(params.All_tests == true && params.Custom_tests == false){
+                if(params.All_tests == true && params.Custom_tests == false && params.Specifc_Feature == false){
                     sh "npx cypress run --browser ${BROWSER}"
                 }
-                if(params.All_tests == false && params.Custom_tests == true){
+                if(params.All_tests == false && params.Custom_tests == true && params.Specifc_Feature == false){
                     sh "npx cypress run --browser ${BROWSER} --spec cypress//e2e//${SPEC}"
+                }
+                if(params.All_tests == false && params.Custom_tests == false && params.Specifc_Feature == true){
+                    sh "npx cypress run --browser ${BROWSER} --spec cypress//e2e//${SPEC} -e TAGS=${Tag_Name}"
                 }
             }
             }
