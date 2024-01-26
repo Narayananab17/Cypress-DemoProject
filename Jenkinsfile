@@ -30,7 +30,7 @@ stages{
             sh "npm i"
             script{
                 if(params.All_tests == true && params.Custom_tests == false && params.Specifc_Feature == false){
-                    sh "npx cypress run --browser ${BROWSER}"
+                    sh "npx cypress run --browser ${BROWSER} -e TAGS='not @feature-skip'"
                 }
                 if(params.All_tests == false && params.Custom_tests == true && params.Specifc_Feature == false){
                     sh "npx cypress run --browser ${BROWSER} --spec cypress//e2e//${SPEC}"

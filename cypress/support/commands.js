@@ -8,9 +8,22 @@
 // https://on.cypress.io/custom-commands
 // ***********************************************
 //
-//
-// -- This is a parent command --
-// Cypress.Commands.add('login', (email, password) => { ... })
+var CryptoJS = require("crypto-js");
+
+
+Cypress.Commands.add('decryptAndType', (encryptedText,secretKey,selector) => {  
+    var decryptedText= CryptoJS.AES.decrypt(encryptedText,secretKey).toString(CryptoJS.enc.Utf8);
+    cy.get(selector).should('be.visible').type(decryptedText)
+})
+
+Cypress.Commands.add('enterUsernameAndPassword', () => { 
+cy.decryptAndType(Cypress.env('username'), Cypress.env('secretKey'),'[name="username"]');
+cy.decryptAndType(Cypress.env('password'), Cypress.env('secretKey'),'[name="password"]');
+ })
+
+
+
+
 //
 //
 // -- This is a child command --

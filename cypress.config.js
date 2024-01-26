@@ -16,8 +16,9 @@ module.exports = defineConfig({
     supportFolder: false,
   },
   env: {
-
-
+    username: 'U2FsdGVkX18SHOLyDefzgnBRa0GDWuPMZjYLeWD3ZWU=',
+    password: 'U2FsdGVkX18IXLO5Kyr2+pzQhPjUu0HJh8FYLb16olE=',
+    secretKey: 'secret key 123'
   },
    
 });
