@@ -50,12 +50,17 @@ stages{
 }
    post{
           always{
-                        script {
-                    // Send an email only if the build status has changed from green/unstable to red
-                    emailext subject: '$DEFAULT_SUBJECT',
-                        body: '$DEFAULT_CONTENT',
-                        attachmentsPattern: 'cypress/cucumber-Report/index.html',
-                        to: 'narayananvsi95@gmail.com'
+                //         script {
+                //     // Send an email only if the build status has changed from green/unstable to red
+                //     emailext subject: '$DEFAULT_SUBJECT',
+                //         body: '$DEFAULT_CONTENT',
+                //         attachmentsPattern: 'cypress/cucumber-Report/index.html',
+                //         to: 'narayananvsi95@gmail.com'
+                // }
+                script {
+                email_subject = "Job ${env.JOB_NAME} : Status ${currentBuild.currentResult}"
+                email_body = '${SCRIPT, template="test-results.groovy"}'
+                emailext body: email_body, subject: email_subject,attachlog:true, to: "narayananvsi95@gmail.com"
                 }
               publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'cypress//cucumber-report', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: ''])
               cleanWs()
