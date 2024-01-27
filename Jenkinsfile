@@ -54,7 +54,6 @@ stages{
                     // Send an email only if the build status has changed from green/unstable to red
                     emailext subject: '$DEFAULT_SUBJECT',
                         body: '$DEFAULT_CONTENT',
-                        replyTo: '$DEFAULT_REPLYTO',
                         to: 'narayananvsi95@gmail.com'
                 }
               publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'cypress//cucumber-report', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: ''])
