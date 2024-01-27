@@ -86,7 +86,7 @@
     </tr>
     <tr>
       <td>More info at:</td>
-      <td><A href="${rooturl}${build.url}HTML_20Report/">${rooturl}${build.url}</A></td>
+      <td><A href="${rooturl}${build.url}HTML_20Report/">${rooturl}${build.url}HTML_20Report/</A></td>
     </tr>
   </table>
   <br/>
