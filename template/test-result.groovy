@@ -84,6 +84,10 @@
       <td>Cause:</td>
       <td><% build.causes.each() { cause -> %> ${hudson.Util.xmlEscape(cause.shortDescription)} <%  } %></td>
     </tr>
+    <tr>
+      <td>More info at:</td>
+      <td><A href="${rooturl}${build.url}HTML_20Report/">${rooturl}${build.url}</A></td>
+    </tr>
   </table>
   <br/>
 
