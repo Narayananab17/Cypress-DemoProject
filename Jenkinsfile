@@ -61,7 +61,7 @@ stages{
                 email_subject = "Job ${env.JOB_NAME} : Status ${currentBuild.currentResult}"
                 email_body = '${SCRIPT, template="./template/test-result.groovy"}'
                 email_body2 = 'More info at: ${env.BUILD_URL}HTML_20Report/'
-                emailext attachLog:true, body: {email_body,email_body2}, subject: email_subject, to: "narayananvsi95@gmail.com"
+                emailext attachLog:true, body: email_body,email_body2, subject: email_subject, to: "narayananvsi95@gmail.com"
                 }
               publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: true, reportDir: 'cypress//cucumber-report', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: ''])
               cleanWs()
