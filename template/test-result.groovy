@@ -1,4 +1,9 @@
-<STYLE type="text/css" data-inline="true">
+<%
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+%>
+
+<STYLE>
   BODY, TABLE, TD, TH, P {
     font-family: Calibri, Verdana, Helvetica, sans serif;
     font-size: 12px;
@@ -51,10 +56,6 @@
   .test-failed {
     color: #E74C3C;
   }
-  .td-title-issues {
-    font-weight: bold;
-    font-size: 120%;
-  }
 </STYLE>
 <BODY>
   <!-- BUILD RESULT -->
@@ -82,9 +83,199 @@
     </tr>
     <tr>
       <td>Cause:</td>
-      <td><% build.causes.each() { cause -> %> ${hudson.Util.xmlEscape(cause.shortDescription)} <%  } %></td>
+      <td><% build.causes.each() { cause -> %> ${cause.shortDescription} <%  } %></td>
     </tr>
   </table>
+  <br/>
+
+  <!-- ROBOT FRAMEWORK RESULTS -->
+    <%
+        def robotResults = false
+        def actions = build.actions // List<hudson.model.Action>
+        actions.each() { action ->
+        if( action instanceof hudson.plugins.robot.RobotBuildAction ) { //hudson.plugins.robot.RobotBuildAction
+        robotResults = true %>
+
+  <table class="section">
+    <tr class="tr-title">
+      <td class="td-title-main" colspan=2>
+        ROBOT FRAMEWORK RESULTS
+      </td>
+    </tr>
+    
+    <tr>
+        <td style="font-size: 20px; padding-left: 5px">Test summary</td>
+    </tr>
+
+    <tr>
+    <td>
+        <table id="robot-summary-table" style="border-collapse:collapse;text-align:center;">
+        <tr>
+            <th style="font-weight:normal;padding:0 10px;">Type </th>
+            <th style="font-weight:normal;padding:0 10px;">Total</th>
+            <th style="font-weight:normal;padding:0 10px;">Failed</th>
+            <th style="font-weight:normal;padding:0 10px;">Passed</th>
+            <th style="font-weight:normal;padding:0 10px;">Pass %</th>
+        </tr>
+        <tr style="font-weight:bold">
+            <th style="font-weight:normal">Critical tests</th>
+            <td style="border-right:1px solid #000;border-bottom:1px solid #000;">${action.result.criticalTotal}</td>
+            <td style="border-right:1px solid #000;border-bottom:1px solid #000;color:red">${action.result.criticalFailed}</td>
+            <td style="border-right:1px solid #000;border-bottom:1px solid #000;color:green">${action.result.criticalPassed}</td>
+            <td style="border-bottom:1px solid #000;">${action.criticalPassPercentage}</td>
+        </tr>
+        <tr style="font-weight:bold">
+            <th style="font-weight:normal">All tests</th>
+            <td style="border-right:1px solid #000;">${action.result.overallTotal}</td>
+            <td style="border-right:1px solid #000;color:red">${action.result.overallFailed}</td>
+            <td style="border-right:1px solid #000;color:green">${action.result.overallPassed}</td>
+            <td>${action.overallPassPercentage}</td>
+        </tr>
+            <tr style="font-weight:bold">
+            <th style="font-weight:normal">Duration</hd>
+            <td colspan=4 align="right">${action.result.humanReadableDuration}</td>
+        </tr>
+        <tr><td><br></td></tr>
+        </table>
+    </td>
+    </tr>
+
+    <tr>
+        <td style="font-size: 20px; padding-left: 5px">Statistics by Suite</td>
+    </tr>
+
+    <tr>
+    <td>
+    <table cellspacing="1" cellpadding="4" border="2" align="left">
+        <thead>
+            <tr bgcolor="#F3F3F3">
+                <td><b>Name      </b></td>
+                <td><b>Failed tests     </b></td>
+               <td><b>Passed tests     </b></td>
+                <td><b>Duration</b></td>
+            </tr>
+        </thead>
+        <tbody>
+        <% 
+        def suites = action.result.allSuites
+        suites.each() { suite ->
+            def currSuite = suite
+            def suiteName = currSuite.displayName
+        // ignore top 2 elements in the structure as they are placeholders
+        while (currSuite.parent != null && currSuite.parent.parent != null) {
+        currSuite = currSuite.parent
+        suiteName = currSuite.displayName + "." + suiteName
+        } %>
+            <tr>
+                <td>
+                    <b><%= suiteName %></b>
+                </td>
+                <td style="border-right:1px solid #000;border-bottom:1px solid #000;color:red">${suite.failed}</td>
+                <td style="border-right:1px solid #000;border-bottom:1px solid #000;color:green">${suite.passed}</td>
+                <td>${suite.humanReadableDuration}</td>
+            </tr>
+        <%  DateFormat format = new SimpleDateFormat("yyyyMMdd HH:mm:ss.SS")
+        def execDateTcPairs = []
+        suite.caseResults.each() { tc ->
+        Date execDate = format.parse(tc.starttime)
+        execDateTcPairs << [execDate, tc]
+        }
+        // primary sort execDate, secondary displayName
+        execDateTcPairs = execDateTcPairs.sort{ a,b -> a[1].displayName <=> b[1].displayName }
+        execDateTcPairs = execDateTcPairs.sort{ a,b -> a[0] <=> b[0] }
+         // tests
+        } %>
+        </tbody>
+    </table>
+    </td>
+    </tr>
+
+    <tr>
+        <td style="font-size: 20px; padding-left: 5px">Test Execution Results</td>
+    </tr>
+
+    <tr>
+
+    <td>
+    <table cellspacing="0" cellpadding="4" border="1" align="left">
+        <thead>
+            <tr bgcolor="#F3F3F3">
+                <td><b> Test Name</b></td>
+                <td><b>Status</b></td>
+               <td><b>Message</b></td>
+                <td><b>Execution</b></td>
+                <td><b>Duration</b></td>
+            </tr>
+        </thead>
+        <tbody>
+        <% def suites1 = action.result.allSuites
+        suites1.each() { suite ->
+        def currSuite = suite
+        def suiteName = currSuite.displayName
+        // ignore top 2 elements in the structure as they are placeholders
+        while (currSuite.parent != null && currSuite.parent.parent != null) {
+        currSuite = currSuite.parent
+        suiteName = currSuite.displayName + "." + suiteName
+        } %>
+            <tr>
+                <td colspan="4">
+                    <b><%= suiteName %></b>
+                </td>
+                <td>${suite.humanReadableDuration}</td>
+            </tr>
+        <%  DateFormat format = new SimpleDateFormat("yyyyMMdd HH:mm:ss.SS")
+        def execDateTcPairs = []
+        suite.caseResults.each() { tc ->
+        Date execDate = format.parse(tc.starttime)
+        execDateTcPairs << [execDate, tc]
+        }
+        // primary sort execDate, secondary displayName
+        execDateTcPairs = execDateTcPairs.sort{ a,b -> a[1].displayName <=> b[1].displayName }
+        execDateTcPairs = execDateTcPairs.sort{ a,b -> a[0] <=> b[0] }
+        def i = 1
+        execDateTcPairs.each() {
+        def execDate = it[0]
+        def tc = it[1]  %>
+            <tr>
+                <td><a href="${rooturl}${build.url}robot/report/log.html#s1-s1-t<%= i%>"><%= tc.displayName %></a></td>
+                <% i = i + 1 %>
+
+                <% if(tc.isPassed()){ %>
+                <td style="font-weight:bold; color: #66CC00">PASS</td>
+                <% } %>
+                <% if(tc.isSkipped()){ %>
+                <td style="font-weight:bold; color: #C7CD05">SKIP</td>
+                <% if ( tc.errorMsg == null ) {tc.errorMsg=""}%>
+                <td><%= tc.errorMsg %></td>
+                <td><%= execDate %></td>
+                <td>${tc.humanReadableDuration}</td>
+                <% return} %>
+                <% if(!tc.isPassed()){ %>
+                <td style="font-weight:bold; color: #FF3333">FAIL</td>
+                <% } %>
+                <td><%      if ( tc.errorMsg == null ) {
+                        tc.errorMsg=""
+    } else {
+         tc.errorMsg
+}%>
+<%= tc.errorMsg %>
+</td>
+                <td><%= execDate %></td>
+                <td>${tc.humanReadableDuration}</td>
+            </tr>
+        <%  } // tests
+        } // suites %>
+        </tbody>
+    </table>
+    </td>
+    </tr>
+
+  </table>
+    <%
+    } // robot results
+    }
+    %>
+
   <br/>
 
   <!-- CHANGE SET -->
@@ -212,7 +403,7 @@
       junitResult -> junitResult.getChildren().each {
         packageResult -> %>
     <tr>
-      <td>${hudson.Util.xmlEscape(packageResult.getName())}</td>
+      <td>${packageResult.getName()}</td>
       <td>${packageResult.getFailCount()}</td>
       <td>${packageResult.getPassCount()}</td>
       <td>${packageResult.getSkipCount()}</td>
@@ -222,7 +413,7 @@
         test -> %>
             <tr>
               <td class="test test-fixed" colspan="5">
-                ${hudson.Util.xmlEscape(test.getFullName())} ${test.getStatus()}
+                ${test.getFullName()} ${test.getStatus()}
               </td>
             </tr>
         <% } %>
@@ -230,7 +421,7 @@
           failed_test -> %>
     <tr>
       <td class="test test-failed" colspan="5">
-        ${hudson.Util.xmlEscape(failed_test.getFullName())} (Age: ${failed_test.getAge()})
+        ${failed_test.getFullName()} (Age: ${failed_test.getAge()})
       </td>
     </tr>
         <% }
@@ -239,40 +430,6 @@
   </table>
   <br/>
   <% } %>
-
-<!-- WARNINGS-NG REPORT -->
-  <%
-  try {
-    def aggregationAction = it.getAction("io.jenkins.plugins.analysis.core.model.AggregationAction")
-    if ( aggregationAction != null ) { %>
-  <table class="section">
-    <tr class="tr-title">
-      <td class="td-title" colspan="5">${hudson.Util.xmlEscape(aggregationAction.getDisplayName())}</td>
-    </tr>
-    <tr>
-      <td class="td-title-issues">Tool</td>
-      <td class="td-title-issues">Low</td>
-      <td class="td-title-issues">Normal</td>
-      <td class="td-title-issues">High</td>
-      <td class="td-title-issues">Error</td>
-    </tr>
-      <% aggregationAction.getTools().each {
-        tool -> %>
-    <tr>
-      <td><a href="${tool.getLatestUrl()}">${hudson.Util.xmlEscape(tool.getName())}</a></td>
-      <td>${tool.getLowSize()}</td>
-      <td>${tool.getNormalSize()}</td>
-      <td>${tool.getHighSize()}</td>
-      <td>${tool.getErrorSize()}</td>
-    </tr>
-    <% } %>
-    </table>
-  <br/>
-  <%
-    }
-  } catch(e) {
-    // we don't do anything
-  } %>
 
 <!-- CONSOLE OUTPUT -->
   <%
