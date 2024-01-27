@@ -8,7 +8,7 @@ parameters{
     string(name: 'branch', defaultValue:"main", description:"Cypress Automation branch",trim: true)
     choice(name:'BROWSER',choices:['chrome','edge','firebox'],description:"Choice the browser where you want to execute you script")
     string(name: 'SPEC', defaultValue:"cypress/e2e/**", description:"Enter the script path that you want to execute")
-    booleanParam(name:'All_tests',description:"Check this box to run All tests")
+    booleanParam(name:'All_tests',defaultValue: true,description:"Check this box to run All tests")
     booleanParam(name:'Custom_tests',description:"Check this box to run Custom tests please specify only the feature file name in Spec input box eg:Login.feature")
     booleanParam(name:'Specifc_Feature',description:"Check this box to run Custom tests please specify Spec and tag Name")
     string(name: 'Tag_Name')
